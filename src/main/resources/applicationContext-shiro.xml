@@ -1,0 +1,45 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd 
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-3.2.xsd 
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-3.2.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-3.2.xsd ">
+
+<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="filterChainDefinitions">
+			<value>	
+				/login.jsp=anon
+				/login2.action=anon
+				/**=authc	<!-- （/**：表示所有请求，anon表示不拦截，authc表示当用户没有登录的时候拦截所有的请求）  所有请求继续向下执行 -->	
+				<!-- /**=authc 	需要用户登录才可以继续向下执行 -->
+			</value>
+		</property>
+		<property name="securityManager" ref="securityMananger" />	<!-- 安全管理器的名称 -->
+		<property name="loginUrl" value="/login.jsp" />	<!-- 当用户没有登录的时候就发出value的值（请求去到指定的页面） -->
+		<property name="unauthorizedUrl" value="/error.jsp" />		<!-- 用户资源不够的时候，指定进入到那个页面 -->
+	</bean>
+	
+	<!-- 注册realm类 -->
+	<bean id="customReaml" class="com.accp.shiro.CustomRealm">
+		
+		<property name="bizDao" ref="bizDao"></property>
+	</bean>
+	
+	<!-- 配置Shiro安全管理器 -->
+	<bean id="securityMananger" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm"  ref="customReaml" />
+	</bean>
+
+
+		
+</beans>
